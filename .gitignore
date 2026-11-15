@@ -1,0 +1,30 @@
+# Build output
+target/
+build/
+out/
+bin/
+
+# Compiled classes
+*.class
+*.jar
+!maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+nbproject/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+hs_err_pid*
