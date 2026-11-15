@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test (Java ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [17, 21]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      - name: Compile
+        run: mvn -B -ntp -DskipTests compile
+
+      - name: Test
+        run: mvn -B -ntp test
+
+      - name: Package
+        if: matrix.java == 21
+        run: mvn -B -ntp -DskipTests package
+
+      - name: Upload jar
+        if: matrix.java == 21
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-practice-jar
+          path: target/*.jar
+          if-no-files-found: error
